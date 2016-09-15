@@ -49,4 +49,4 @@ Temporary Items
 #Ignore all but the src subfolder
 ./*
 ./*/
-!./src
+!./src/
