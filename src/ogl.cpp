@@ -37,7 +37,7 @@ void display() {
   i%=nbIterations;
 
   glFlush();
-  glutTimerFunc(100,callDisplay,0);
+  glutTimerFunc(50,callDisplay,0);
 }
 
 int openGLMode(int c, char **v) {

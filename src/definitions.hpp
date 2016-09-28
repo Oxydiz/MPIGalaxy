@@ -4,13 +4,13 @@
 #include <math.h>
 
 //Parameters
-#define WIDTH 800
-#define HEIGHT 600
-#define CLIP_PLANE_X 400
-#define CLIP_PLANE_Y 400/(WIDTH/HEIGHT)
-#define PIXELSIZE 0.01f
+#define WIDTH 1200
+#define HEIGHT 900
+#define CLIP_PLANE_X 1200
+#define CLIP_PLANE_Y CLIP_PLANE_X/(WIDTH/HEIGHT)
+#define PIXELSIZE 0.005f
 #define CST_G 6.674 * pow(10,-11) // 6.674 * 10^-11
-#define DELTA_T 500
+#define DELTA_T 20
 
 //Error codes
 #define WRONG_USAGE -1

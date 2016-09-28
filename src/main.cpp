@@ -9,6 +9,38 @@
 
 void moveGalaxy(Star *galaxy, int nbStars) {
 
+  int i,j;
+  long double dx, dy, dst, Fx = 0, Fy = 0, ax, ay;
+
+  for(i = 0; i < nbStars; i++) {
+    for(j = 0; j < nbStars; j++) {
+      if(i == j) continue;
+      //We calculate the direction vector;
+      dx = galaxy[j].x - galaxy[i].x;
+      dy = galaxy[j].y - galaxy[i].y;
+      dst = dx * dx + dy * dy;
+      //We calculate the acceleration
+      Fx += (CST_G * ((double) galaxy[i].m * galaxy[j].m) / dst) * dx;
+      Fy += (CST_G * ((double) galaxy[i].m * galaxy[j].m) / dst) * dy;
+      // Fx += (CST_G * ((double) 1) / dst) * dx;
+      // Fy += (CST_G * ((double) 1) / dst) * dy;
+    }
+    ax = Fx / ((double) 1);
+    ay = Fy / ((double) 1);
+    if(i == 0)
+      printf("s : [%f,%f,%d] f : [%Lf,%Lf] a : [%Lf,%Lf]\n",galaxy[i].x,galaxy[i].y,galaxy[i].m,Fx,Fy,ax,ay);
+    //We update the speed
+    galaxy[i].sx += ax * DELTA_T;
+    galaxy[i].sy += ay * DELTA_T;
+    //We update the position
+    galaxy[i].x += galaxy[i].sx * DELTA_T;
+    galaxy[i].y += galaxy[i].sy * DELTA_T;
+    Fx = Fy = 0;
+  }
+}
+
+void moveGalaxyOld(Star *galaxy, int nbStars) {
+
   int i;
   double x = 0, y = 0, cx, cy, a, dx, dy, dst; //c = corrected, a = acceleration, d = direction
   long mass = 0, cmass;
