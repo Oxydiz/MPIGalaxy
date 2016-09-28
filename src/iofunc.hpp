@@ -6,7 +6,7 @@
 #include "definitions.hpp"
 
 float parseFloat(FILE*);
-Star *loadGalaxy(char*,int*);
+Star *loadGalaxy(char*,int*,int*);
 FILE *initStorage(char*,int,int);
 void storeGalaxy(FILE*,Star*,int);
 

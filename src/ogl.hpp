@@ -6,6 +6,7 @@
 
 #include "../glut_win/hacked_glut.h"
 #include "definitions.hpp"
+#include "iofunc.hpp"
 
 int openGLMode(int c, char **v);
 

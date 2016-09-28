@@ -33,18 +33,23 @@ float parseFloat(FILE *f) {
 
 }
 
-Star *loadGalaxy(char *file, int *nbStars) {
+Star *loadGalaxy(char *file, int *nbStars, int* nbIterations) {
 
   FILE *f = fopen(file,"r");
   if(f == NULL) { printf("Failed to open input file.\n"); exit(FOPEN_FAIL); }
 
-  *nbStars = (int)parseFloat(f);
   int i;
-  Star *galaxy = (Star*)malloc(*nbStars * sizeof(Star));
+  *nbStars = (int)parseFloat(f);
+  if(nbIterations != NULL)
+    *nbIterations = parseFloat(f);
 
-  for(i = 0; i < *nbStars; i++) {
-    parseFloat(f);
-    parseFloat(f);
+  Star *galaxy = (Star*)malloc(*nbStars * sizeof(Star) * (nbIterations == NULL ? 1 : *nbIterations));
+
+  for(i = 0; i < *nbStars * (nbIterations == NULL ? 1 : *nbIterations); i++) {
+    if(nbIterations == NULL) {
+      parseFloat(f);
+      parseFloat(f);
+    }
     galaxy[i].x = parseFloat(f);
     galaxy[i].y = parseFloat(f);
     galaxy[i].m = (int) parseFloat(f);

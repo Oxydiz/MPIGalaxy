@@ -13,18 +13,22 @@ int main(int c,char **v) {
   if(c == 2)
     return openGLMode(c,v);
 
-  if(atoi(v[3]) < 1) { printf("Invalid number of iterations.\n"); exit(UNSUPPORTED); }
+  int nbIterations = atoi(v[3]);
+
+  if(nbIterations < 1) { printf("Invalid number of iterations.\n"); exit(UNSUPPORTED); }
 
   MPI_Init(&c,&v);
 
   int id, size, nbStars;
   MPI_Comm_size(MPI_COMM_WORLD,&size);
   MPI_Comm_rank(MPI_COMM_WORLD,&id);
-  Star *galaxy = loadGalaxy(v[1], &nbStars);
+  Star *galaxy = loadGalaxy(v[1], &nbStars,NULL);
 
-  FILE *f = initStorage(v[2],nbStars, atoi(v[3]));
-  storeGalaxy(f,galaxy,nbStars);
-  storeGalaxy(f,galaxy,nbStars);
+  FILE *f = initStorage(v[2],nbStars, nbIterations);
+  //TODO:Change this
+  int i;
+  for(i = 0; i < nbIterations; i++)
+    storeGalaxy(f,galaxy,nbStars);
 
   free(galaxy);
   MPI_Finalize();
