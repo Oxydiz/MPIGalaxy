@@ -3,6 +3,7 @@
 Star *galaxy;
 int nbStars, nbIterations;
 int i = 0;
+FILE *f;
 
 void drawGalaxy() {
 
@@ -24,6 +25,9 @@ void drawGalaxy() {
 
 }
 
+void display();
+void callDisplay(int value) { display(); }
+
 void display() {
   glClearColor(0.0f,0.0f,0.0f,1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -33,12 +37,14 @@ void display() {
   i%=nbIterations;
 
   glFlush();
+  glutTimerFunc(100,callDisplay,0);
 }
 
 int openGLMode(int c, char **v) {
 
   galaxy = loadGalaxy(v[1],&nbStars,&nbIterations);
-  printf("%d %d", nbStars, nbIterations);
+
+  f = fopen("debug.txt","w+");
 
   glutInit(&c,v);                 // Initialize GLUT
   glutInitWindowSize(WIDTH, HEIGHT);   // Set the window's initial width & height

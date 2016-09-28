@@ -1,11 +1,12 @@
 #include "iofunc.hpp"
 
-float parseFloat(FILE *f) {
+float parseFloat(FILE *f, int *invalid) {
   int i = 0;
   char c, str[20] = {'\0'};
 
   while((c = fgetc(f)) != EOF)
     switch(c) {
+      case '-':
       case '0':
       case '1':
       case '2':
@@ -22,13 +23,16 @@ float parseFloat(FILE *f) {
       case ' ':
       case '\n':
       case 13: //CR
-        return i == 0? -1 : atof(str);
+        if(i == 0) { *invalid = 1; return 0; }
+        *invalid = 0;
+        return atof(str);
       default:
         printf("Unsupported character : %c(%d)",c,c);
         exit(UNSUPPORTED);
 
     }
 
+  *invalid = 1;
   return 0;
 
 }
@@ -38,21 +42,26 @@ Star *loadGalaxy(char *file, int *nbStars, int* nbIterations) {
   FILE *f = fopen(file,"r");
   if(f == NULL) { printf("Failed to open input file.\n"); exit(FOPEN_FAIL); }
 
-  int i;
-  *nbStars = (int)parseFloat(f);
+  int flag;
+  *nbStars = (int)parseFloat(f, &flag);
   if(nbIterations != NULL)
-    *nbIterations = parseFloat(f);
+    *nbIterations = parseFloat(f,&flag);
 
   Star *galaxy = (Star*)malloc(*nbStars * sizeof(Star) * (nbIterations == NULL ? 1 : *nbIterations));
 
+  float tmp;
+  int i;
   for(i = 0; i < *nbStars * (nbIterations == NULL ? 1 : *nbIterations); i++) {
-    if(nbIterations == NULL) {
-      parseFloat(f);
-      parseFloat(f);
+    tmp = parseFloat(f,&flag);
+    if(flag) {
+      i--;
+      continue;
     }
-    galaxy[i].x = parseFloat(f);
-    galaxy[i].y = parseFloat(f);
-    galaxy[i].m = (int) parseFloat(f);
+
+    galaxy[i].x = tmp;
+    galaxy[i].y = parseFloat(f,&flag);
+    galaxy[i].m = (int) parseFloat(f, &flag);
+    galaxy[i].sx = galaxy[i].sy = 0;
   }
 
   fclose(f);
@@ -70,5 +79,5 @@ void storeGalaxy(FILE *f, Star *galaxy, int nbStars) {
   int i;
   fprintf(f,"\n");
   for(i = 0; i < nbStars; i++)
-    fprintf(f,"%.2f %.2f %d ",galaxy[i].x,galaxy[i].y,galaxy[i].m);
+    fprintf(f,"%f %f %d ",galaxy[i].x,galaxy[i].y,galaxy[i].m);
 }
