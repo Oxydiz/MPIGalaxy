@@ -54,10 +54,10 @@ Star *loadGalaxy(char *file, int *nbStars) {
   return galaxy;
 }
 
-FILE *initStorage(char *file, int nbStars) {
+FILE *initStorage(char *file, int nbStars, int nbIterations) {
   FILE *f = fopen(file,"w+");
   if(f == NULL) { printf("Failed to open output file.\n"); exit(FOPEN_FAIL); }
-  fprintf(f,"%d",nbStars);
+  fprintf(f,"%d %d",nbStars, nbIterations);
   return f;
 }
 

@@ -4,10 +4,16 @@
 #include "hacked_mpi.h"
 #include "definitions.hpp"
 #include "iofunc.hpp"
+#include "ogl.hpp"
 
 int main(int c,char **v) {
 
-  if(c != 4) { printf("Usage : program [InputFile] [OutputFile] [Iterations].\n"); exit(WRONG_USAGE); }
+  if(c != 4 && c != 2) { printf("Usage : program [InputFile] [OutputFile] [Iterations] OR program [OpenGLInputFile].\n"); exit(WRONG_USAGE); }
+
+  if(c == 2)
+    return openGLMode(c,v);
+
+  if(atoi(v[3]) < 1) { printf("Invalid number of iterations.\n"); exit(UNSUPPORTED); }
 
   MPI_Init(&c,&v);
 
@@ -16,7 +22,7 @@ int main(int c,char **v) {
   MPI_Comm_rank(MPI_COMM_WORLD,&id);
   Star *galaxy = loadGalaxy(v[1], &nbStars);
 
-  FILE *f = initStorage(v[2],nbStars);
+  FILE *f = initStorage(v[2],nbStars, atoi(v[3]));
   storeGalaxy(f,galaxy,nbStars);
   storeGalaxy(f,galaxy,nbStars);
 
