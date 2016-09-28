@@ -25,7 +25,7 @@ float parseFloat(FILE *f) {
         return i == 0? -1 : atof(str);
       default:
         printf("Unsupported character : %c(%d)",c,c);
-        exit(-2);
+        exit(UNSUPPORTED);
 
     }
 
@@ -36,7 +36,7 @@ float parseFloat(FILE *f) {
 Star *loadGalaxy(char *file, int *nbStars) {
 
   FILE *f = fopen(file,"r");
-  if(f == NULL) { printf("Failed to open file.\n"); exit(-3); }
+  if(f == NULL) { printf("Failed to open input file.\n"); exit(FOPEN_FAIL); }
 
   *nbStars = (int)parseFloat(f);
   int i;
@@ -52,4 +52,18 @@ Star *loadGalaxy(char *file, int *nbStars) {
 
   fclose(f);
   return galaxy;
+}
+
+FILE *initStorage(char *file, int nbStars) {
+  FILE *f = fopen(file,"w+");
+  if(f == NULL) { printf("Failed to open output file.\n"); exit(FOPEN_FAIL); }
+  fprintf(f,"%d",nbStars);
+  return f;
+}
+
+void storeGalaxy(FILE *f, Star *galaxy, int nbStars) {
+  int i;
+  fprintf(f,"\n");
+  for(i = 0; i < nbStars; i++)
+    fprintf(f,"%.2f %.2f %d ",galaxy[i].x,galaxy[i].y,galaxy[i].m);
 }

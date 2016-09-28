@@ -2,12 +2,12 @@
 #include <stdio.h>
 //#include <mpi.h>
 #include "hacked_mpi.h"
-#include "types.hpp"
+#include "definitions.hpp"
 #include "iofunc.hpp"
 
 int main(int c,char **v) {
 
-  if(c != 2) { printf("Usage : program [InputFile].\n"); exit(-1); }
+  if(c != 4) { printf("Usage : program [InputFile] [OutputFile] [Iterations].\n"); exit(WRONG_USAGE); }
 
   MPI_Init(&c,&v);
 
@@ -15,7 +15,10 @@ int main(int c,char **v) {
   MPI_Comm_size(MPI_COMM_WORLD,&size);
   MPI_Comm_rank(MPI_COMM_WORLD,&id);
   Star *galaxy = loadGalaxy(v[1], &nbStars);
-  printf("%f",galaxy[3].y);
+
+  FILE *f = initStorage(v[2],nbStars);
+  storeGalaxy(f,galaxy,nbStars);
+  storeGalaxy(f,galaxy,nbStars);
 
   free(galaxy);
   MPI_Finalize();
