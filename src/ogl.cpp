@@ -11,8 +11,8 @@ void drawGalaxy() {
   int j, offset = i * nbStars;
 
   for(j = 0; j < nbStars; j++) {
-    x = (galaxy[offset + j].x / (CLIP_PLANE_X/2)) - 1;
-    y = (galaxy[offset + j].y / (CLIP_PLANE_Y/2)) - 1;
+    x = (galaxy[offset + j].x / (CLIP_PLANE_X/2)) - 1 + OFFSET_X;
+    y = (galaxy[offset + j].y / (CLIP_PLANE_Y/2)) - 1 + OFFSET_Y;
 
     glBegin(GL_QUADS);
     glColor3f(1.0f,1.0f,1.0f);
@@ -37,7 +37,7 @@ void display() {
   i%=nbIterations;
 
   glFlush();
-  glutTimerFunc(50,callDisplay,0);
+  glutTimerFunc(FRAME_DELAY,callDisplay,0);
 }
 
 int openGLMode(int c, char **v) {
