@@ -22,13 +22,15 @@ void moveGalaxy(Star *galaxy, int nbStars, int id, int split) {
       dy = galaxy[j].y - galaxy[i].y;
       dst = dx * dx + dy * dy;
       //We calculate the acceleration
-      Fx += (CST_G * ((double) galaxy[i].m * galaxy[j].m) / dst) * dx;
-      Fy += (CST_G * ((double) galaxy[i].m * galaxy[j].m) / dst) * dy;
+      Fx += (/*CST_G * */((double) /*galaxy[i].m * */galaxy[j].m) / dst) * dx;
+      Fy += (/*CST_G * */((double) /*galaxy[i].m * */galaxy[j].m) / dst) * dy;
       // Fx += (CST_G * ((double) 1) / dst) * dx;
       // Fy += (CST_G * ((double) 1) / dst) * dy;
     }
-    ax = Fx / ((double) 1);
-    ay = Fy / ((double) 1);
+    ax = CST_G * Fx;// / ((double) galaxy[i].m);
+    ay = CST_G * Fy;// / ((double) galaxy[i].m);
+    // ax = Fx / ((double) 1);
+    // ay = Fy / ((double) 1);
     // if(i == 0)
       // printf("s : [%f,%f,%d] f : [%Lf,%Lf] a : [%Lf,%Lf]\n",galaxy[i].x,galaxy[i].y,galaxy[i].m,Fx,Fy,ax,ay);
     //We update the speed

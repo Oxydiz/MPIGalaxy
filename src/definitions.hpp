@@ -14,7 +14,7 @@
 #define FRAME_DELAY 20
 
 #define CST_G 6.674 * pow(10,-11) // 6.674 * 10^-11
-#define DELTA_T 20
+#define DELTA_T 200
 
 //Error codes
 #define WRONG_USAGE -1
