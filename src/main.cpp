@@ -121,22 +121,64 @@ int main(int c,char **v) {
     MPI_Bcast(&nbStars,1,MPI_INT,0,MPI_COMM_WORLD);
     MPI_Bcast(galaxy,nbStars,mpi_star,0,MPI_COMM_WORLD);
 
+    //We store the intial state of the galaxy
     f = initStorage(v[2],nbStars, nbIterations);
     storeGalaxy(f,galaxy,nbStars);
+
   } else {
+    //Receive the necessary data
     MPI_Bcast(&nbStars,1,MPI_INT,0,MPI_COMM_WORLD);
     galaxy = (Star*)malloc(nbStars * sizeof(Star));
     MPI_Bcast(galaxy,nbStars,mpi_star,0,MPI_COMM_WORLD);
   }
 
-  int i, split = nbStars / size;
-  for(i = 0; i < nbIterations; i++) {
-    moveGalaxy(galaxy,nbStars,id,split);
-    if(id == 0)
-      moveGalaxy(galaxy,nbStars,size,split);
-    MPI_Allgather(&(galaxy[split * id]),split,mpi_star,galaxy,split,mpi_star,MPI_COMM_WORLD);
-    if(id == 0)
+  int i;
+
+  //Single processor case
+  if(size == 1) {
+    for(i = 0; i < nbIterations; i++) {
+      moveGalaxy(galaxy,nbStars,0,nbStars);
       storeGalaxy(f,galaxy,nbStars);
+    }
+  } else {
+    //Multiple processor case. Processor 0 is responsible for the output, all other processors compute
+
+    //Here we set up the communication so that processor 0 listens to AllGatherv without sending anything
+    int *recv = (int*)malloc(size * sizeof(int)), *off = (int*)malloc(size * sizeof(int)), split = nbStars / (size - 1);
+    recv[0] = 0;
+    off[0] = -split;
+    for(i = 1; i < size; i++) {
+      recv[i] = split;
+      off[i] = off[i - 1] + split;
+    }
+    off[0] = 0;
+
+    //Processor 0 receives the consecutive states of the galaxy and outputs them
+    if(id == 0) {
+      for(i = 0; i < nbIterations; i++) {
+        MPI_Allgatherv(galaxy,recv[0],mpi_star,galaxy,recv,off,mpi_star,MPI_COMM_WORLD);
+        storeGalaxy(f,galaxy,nbStars);
+      }
+      double t;
+      MPI_Status status;
+      MPI_Recv(&t,1,MPI_DOUBLE,1,0,MPI_COMM_WORLD,&status);
+      printf("\nProcessing time with %d processors : %fs\n\n",size,t);
+    } else {
+      //Other processors compute the next galaxy state
+      double t = -MPI_Wtime();
+      for(i = 0; i < nbIterations; i++) {
+        moveGalaxy(galaxy,nbStars,id-1,split);
+        if(id == 1)
+          moveGalaxy(galaxy,nbStars,size-1,split);
+        MPI_Allgatherv(&(galaxy[split * (id-1)]),recv[id],mpi_star,galaxy,recv,off,mpi_star,MPI_COMM_WORLD);
+      }
+      t+=MPI_Wtime();
+      if(id == 1)
+        MPI_Send(&t,1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+    }
+
+    free(recv);
+    free(off);
   }
 
   free(galaxy);
