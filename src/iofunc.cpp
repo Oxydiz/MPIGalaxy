@@ -81,3 +81,11 @@ void storeGalaxy(FILE *f, Star *galaxy, int nbStars) {
   for(i = 0; i < nbStars; i++)
     fprintf(f,"%f %f %d ",galaxy[i].x,galaxy[i].y,galaxy[i].m);
 }
+
+void printResults(Star *galaxy, int nbStars, double time) {
+  printf("%d\n",nbStars);
+  int i;
+  for(i = 0; i < nbStars; i++)
+    printf("%f %f %d\n",galaxy[i].x,galaxy[i].y,galaxy[i].m);
+  printf("TIME %f\n",time);
+}

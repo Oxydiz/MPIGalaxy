@@ -9,5 +9,6 @@ float parseFloat(FILE*,int*);
 Star *loadGalaxy(char*,int*,int*);
 FILE *initStorage(char*,int,int);
 void storeGalaxy(FILE*,Star*,int);
+void printResults(Star*, int, double);
 
 #endif

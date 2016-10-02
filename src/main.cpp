@@ -78,6 +78,7 @@ int main(int c,char **v) {
 
   Star *galaxy = NULL;
   FILE *f = NULL;
+  double t;
 
   if(id == 0) {
     galaxy = loadGalaxy(v[1], &nbStars,NULL);
@@ -101,10 +102,12 @@ int main(int c,char **v) {
 
   //Single processor case
   if(size == 1) {
+    t = -MPI_Wtime();
     for(i = 0; i < nbIterations; i++) {
       moveGalaxy(galaxy,nbStars,0,nbStars);
       storeGalaxy(f,galaxy,nbStars);
     }
+    t+= MPI_Wtime();
   } else {
     //Multiple processor case. Processor 0 is responsible for the output, all other processors compute
 
@@ -124,13 +127,12 @@ int main(int c,char **v) {
         MPI_Allgatherv(galaxy,recv[0],mpi_star,galaxy,recv,off,mpi_star,MPI_COMM_WORLD);
         storeGalaxy(f,galaxy,nbStars);
       }
-      double t;
       MPI_Status status;
       MPI_Recv(&t,1,MPI_DOUBLE,1,0,MPI_COMM_WORLD,&status);
-      printf("\nProcessing time with %d processors : %fs\n\n",size,t);
+      //printf("\nProcessing time with %d processors : %fs\n\n",size,t);
     } else {
       //Other processors compute the next galaxy state
-      double t = -MPI_Wtime();
+      t = -MPI_Wtime();
       for(i = 0; i < nbIterations; i++) {
         moveGalaxy(galaxy,nbStars,id-1,split);
         if(id == 1)
@@ -145,6 +147,9 @@ int main(int c,char **v) {
     free(recv);
     free(off);
   }
+
+  if(id == 0)
+    printResults(galaxy,nbStars,t);
 
   free(galaxy);
   fclose(f);
