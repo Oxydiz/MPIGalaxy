@@ -8,7 +8,7 @@
 #define HEIGHT 900
 #define CLIP_PLANE_X 1200
 #define CLIP_PLANE_Y CLIP_PLANE_X/(WIDTH/HEIGHT)
-#define PIXELSIZE 0.005f
+#define SCALE 250
 #define OFFSET_X 0.8
 #define OFFSET_Y 0.4
 #define FRAME_DELAY 20

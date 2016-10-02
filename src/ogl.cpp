@@ -7,18 +7,19 @@ FILE *f;
 
 void drawGalaxy() {
 
-  float x,y;
+  float x,y,scale;
   int j, offset = i * nbStars;
+
+  glEnable(GL_POINT_SMOOTH);
 
   for(j = 0; j < nbStars; j++) {
     x = (galaxy[offset + j].x / (CLIP_PLANE_X/2)) - 1 + OFFSET_X;
     y = (galaxy[offset + j].y / (CLIP_PLANE_Y/2)) - 1 + OFFSET_Y;
+    scale = ((double)galaxy[offset + j].m) / SCALE;
+    glPointSize(scale);
 
-    glBegin(GL_QUADS);
+    glBegin(GL_POINTS);
     glColor3f(1.0f,1.0f,1.0f);
-    glVertex2f(x,y);
-    glVertex2f(x,y + PIXELSIZE);
-    glVertex2f(x + PIXELSIZE,y);
     glVertex2f(x,y);
     glEnd();
   }

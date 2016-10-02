@@ -16,7 +16,7 @@ void moveGalaxy(Star *galaxy, int nbStars, int id, int split) {
   int i,j;
   long double dx, dy, dst, Fx = 0, Fy = 0, ax, ay;
 
-  #pragma omp parallel for private(j,dx,dy,dst,Fx,Fy,ax,ay)
+  //#pragma omp parallel for private(j,dx,dy,dst,Fx,Fy,ax,ay)
   for(i = id * split; i < (id + 1) * split; i++) {
     if(i>=nbStars) {  //Breaks the loop if i >= nbStars. This is a work around omp for limitations
       i+=nbStars;
